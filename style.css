@@ -1,0 +1,16 @@
+body{
+    color: blue;
+    font-size: 30px;
+    margin: 30px;
+    font-family: "Lucida Console", Monospace;
+}
+
+#count{
+    font-size: 300px;
+    font-family: "Courier New", Monospace;
+}
+hr{
+    color: #f00;
+    background-color: #f00;
+    height: 5px;
+}
