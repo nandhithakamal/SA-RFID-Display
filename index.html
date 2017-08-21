@@ -16,10 +16,25 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 
         <!-- Script -->
+
         <script src = "./script.js"></script>
 
     </head>
     <body>
+        <script src = "/socket.io/socket.io.js"></script>
+        <script>
+            var socket = io('http://localhost:9090');
+            socket.on('tagRead', function(data){
+                var regex = /Nothing yet!/;
+                var content = $("#rightCol").html();
+                if(content.match(regex)){
+                    $("#rightCol").html(data);
+                }
+                else{
+                    $("#rightCol").append("<br>" + data);
+                }
+            });
+        </script>
         <div class = "row container container-fluid well">
             <div class = "col-lg-3 text-center" id = "leftCol">
                 <div id = "count">
@@ -27,7 +42,7 @@
                 <hr>
                 Time
             </div>
-            <div class = "col-lg-9" id = "rightCol">
+            <div class = "col-lg-9 pre-scrollable" id = "rightCol">
             </div>
         </div>
     </body>

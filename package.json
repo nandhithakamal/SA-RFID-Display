@@ -10,9 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "events": "^1.1.1",
     "hapi": "^16.5.2",
     "inert": "^4.2.1",
-    "serialport": "^5.0.0"
+    "serialport": "^5.0.0",
+    "socket.io": "^2.0.3"
   }
 }
