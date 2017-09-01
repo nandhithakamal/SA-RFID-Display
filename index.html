@@ -28,10 +28,10 @@
                 var regex = /Nothing yet!/;
                 var content = $("#rightCol").html();
                 if(content.match(regex)){
-                    $("#rightCol").html(data);
+                    $("#rightCol").html("<div id = '" + data + "'>" + data + "</div>");
                 }
                 else{
-                    $("#rightCol").append("<br>" + data);
+                    $("#rightCol").append("<div id = '" + data + "'>" + data + "</div>");
                 }
             });
         </script>
@@ -44,7 +44,7 @@
                     Time
                 </div>
             </div>
-            <div class = "col-lg-9 pre-scrollable" id = "rightCol">
+            <div class = "col-lg-9" id = "rightCol">
             </div>
         </div>
     </body>
