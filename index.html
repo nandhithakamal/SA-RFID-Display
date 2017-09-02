@@ -28,10 +28,10 @@
                 var regex = /Nothing yet!/;
                 var content = $("#rightCol").html();
                 if(content.match(regex)){
-                    $("#rightCol").html("<div id = '" + data + "'>" + data + "</div>");
+                    $("#rightCol").html("<div id = '" + data + "'>" + JSON.stringify(data) + "</div>");
                 }
                 else{
-                    $("#rightCol").append("<div id = '" + data + "'>" + data + "</div>");
+                    $("#rightCol").append("<div id = '" + data + "'>" + JSON.stringify(data) + "</div>");
                 }
             });
         </script>

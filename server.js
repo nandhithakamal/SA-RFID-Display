@@ -1,32 +1,27 @@
 var hapi = require('hapi');
 var coap = require('coap');
 var qs = require('querystring');
-var pg = require('hapi-postgres-connection').getCon();
 var pg = require("pg");
 
 
 var hapiServer = new hapi.Server();
 var coapServer = coap.createServer();
 
-
 var tag = '';
 var parsedData = undefined;
 
-
-/*var conString = process.env["DATABASE_URL"];
+var conString = process.env["DATABASE_URL"];
 var client = new pg.Client(conString);
-client.connect();
-
-
-var sp = new serialport(portName, {
-    baudRate: 230400,
-});*/
-
+client.connect((err) =>{
+    if(err){
+        console.log("Connection error" + err);
+    }else{
+        console.log("Connected");
+    }
+});
 
 hapiServer.connection({ port: 9090, host: 'localhost'});
 
-
-//console.log(JSON.stringify(selectQuery));
 var io = require('socket.io')(hapiServer.listener);
 
 io.on('connection', function(socket){
@@ -45,6 +40,7 @@ hapiServer.register(require('inert'), (err) => {
         }
         else{
             console.log(`Server on ${hapiServer.info.uri}`);
+
         }
     });
 
@@ -94,50 +90,40 @@ hapiServer.register(require('inert'), (err) => {
 
 coapServer.on('request', function(req, res) {
   if(req.method=='POST') {
-            var body='';
-            req.on('data', function (data) {
-                body +=data;
-            });
-          }
-      //  res.write(qs.parse(body));
-      req.on('end',function(){
-             var POST =  JSON.stringify(qs.parse(body));
-             tag = POST.slice(3,14);
-             console.log(tag);
-             io.emit('tagRead',tag);
-            //console.log(JSON.stringify(POST));
-         });
+        var body='';
+        req.on('data', function (data) {
+            body +=data;
+        });
+    }
+    req.on('end',function(){
+         var POST =  JSON.stringify(qs.parse(body));
+         tag = POST.slice(3,14);
+         var selectQuery = `select * from emp_records where tag = '${tag}';`;
+         var insertQuery = `INSERT INTO logs values (DEFAULT, now(), '${tag}');`;
 
-
-res.end("thank you");
-  //res.end('Hello ' + req.url.split('/')[1] + '\n')
+         client.query(selectQuery, (err, res) =>{
+            if(err)
+                console.log(err + " Error in DB");
+            else if (res.rows[0] == undefined){
+                console.log(tag + 'Unauthorised');
+                io.emit('tagRead', tag + ' - Unauthorised');
+            }
+            else{
+                details = res.rows[0];
+                client.query(insertQuery, (err, res) =>{
+                    if(err)
+                       console.log(err + "Error inserting the log");
+                    else{
+                       console.log(details);
+                       io.emit('tagRead', details);
+                   }
+               });
+           }
+        });
+    });
+    res.end("thank you");
 });
 
-// the default CoAP port is 5683
 coapServer.listen(function() {
     console.log("SEAMLESS_ACCESS_SERVER_STARTED");
 });
-
-/*sp.on('data', function(data) {
-    parsedData = data.toString();
-    //console.log("Parsed Data" + parsedData + typeof parsedData + parsedData.length);
-    if (parsedData.length > 3){
-        tag = parsedData;
-        var selectQuery = client.query(`select * from emp_records where tag = ${tag};`, (err, res) => {
-            if(err)
-                console.log(err + "error from db - not an authorized user!");
-            else{
-                console.log(res.rows[0]);
-                client.query(`INSERT INTO logs values (DEFAULT, now(), ${tag});`);
-                io.emit(res.rows[0]);
-            }
-        });
-
-        io.emit('tagRead', tag);
-        //console.log(tags);
-    }
-    else{
-        tag = undefined;
-        //console.log(tags);
-    }
-});*/

@@ -13,7 +13,6 @@
     "coap": "^0.21.0",
     "env2": "^2.2.0",
     "hapi": "^16.5.2",
-    "hapi-postgres-connection": "^6.4.0",
     "inert": "^4.2.1",
     "pg": "^7.2.0",
     "querystring": "^0.2.0",
